@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+data/
+uploads/
+results/
+logs/
+.vscode/
+.DS_Store
