@@ -1,0 +1,43 @@
+name: Black Formatting Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  black-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install Black
+      run: |
+        python -m pip install --upgrade pip
+        pip install black
+    
+    - name: Check formatting with Black
+      run: |
+        echo "=== Checking code formatting with Black ==="
+        
+        # Проверка без изменений
+        black --check .
+        
+        # Показать различия если есть
+        black --check --diff . || true
+        
+    - name: Auto-fix formatting (optional)
+      if: failure()
+      continue-on-error: true
+      run: |
+        echo "=== Auto-fixing formatting ==="
+        black .
+        echo "Formatted files:"
+        git diff --name-only
