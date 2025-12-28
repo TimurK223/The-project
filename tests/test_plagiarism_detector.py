@@ -149,12 +149,9 @@ class TestFileLoading(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp(prefix="plagiarism_test_")
         # Создаем тестовые файлы
         self.test_files = {
-            "doc1.txt": 
-            "Artificial intelligence is transforming " "modern education.",
-            "doc2.txt": 
-            "AI technologies are revolutionizing " "educational systems.",
-            "doc3.txt": 
-            "This is a test content. " "Machine learning is important.",
+            "doc1.txt": "Artificial intelligence is transforming " "modern education.",
+            "doc2.txt": "AI technologies are revolutionizing " "educational systems.",
+            "doc3.txt": "This is a test content. " "Machine learning is important.",
         }
 
         self.test_folder = create_test_files(self.temp_dir, self.test_files)
