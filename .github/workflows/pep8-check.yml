@@ -23,19 +23,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install pycodestyle
     
-    - name: Run PEP 8 checks with 90 chars limit
+    - name: Run PEP 8 checks
       run: |
-        echo "=== Running PEP 8 style checking (max line length: 90) ==="
-        # Основные проверки PEP 8 с увеличенной длиной строки
+        echo "=== Running PEP 8 style checking ==="
+        # Основные проверки PEP 8
         pycodestyle --first .
         
-        # Строгие проверки с длиной строки 90 символов
-        pycodestyle --max-line-length=90 --statistics .
+        # Строгие проверки
+        pycodestyle --max-line-length=79 --statistics .
         
-        # Детальная проверка с подсчетом ошибок
+        # Проверка конкретных правил PEP 8
         echo "=== Detailed PEP 8 violations ==="
-        pycodestyle --select=E,W --max-line-length=90 --count .
-        
-        # Проверка только ошибок длины строки
-        echo "=== Line length violations ==="
-        pycodestyle --select=E501 --max-line-length=90 . || true
+        pycodestyle --select=E,W --max-line-length=79 --count .
