@@ -1,0 +1,37 @@
+name: PEP 8 Style Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pep8-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install pycodestyle (PEP 8 checker)
+      run: |
+        python -m pip install --upgrade pip
+        pip install pycodestyle
+    
+    - name: Run PEP 8 checks
+      run: |
+        echo "=== Running PEP 8 style checking ==="
+        # Основные проверки PEP 8
+        pycodestyle --first .
+        
+        # Строгие проверки
+        pycodestyle --max-line-length=79 --statistics .
+        
+        # Проверка конкретных правил PEP 8
+        echo "=== Detailed PEP 8 violations ==="
+        pycodestyle --select=E,W --max-line-length=79 --count .
