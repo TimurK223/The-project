@@ -113,7 +113,7 @@ class TestModuleImport(unittest.TestCase):
         self.assertTrue(MODULE_LOADED, "Модуль не загружен")
 
     def test_plagiarism_detector_class(self):
-        """Тест наличия класса PlagiarismDetector."""
+        "Тест наличия класса PlagiarismDetector."
         self.assertIsNotNone(PlagiarismDetector, "Класс PlagiarismDetector не найден")
 
 
