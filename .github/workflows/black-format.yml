@@ -24,20 +24,29 @@ jobs:
         pip install black
     
     - name: Check formatting with Black
-      run: |
-        echo "=== Checking code formatting with Black ==="
-        
-        # Проверка без изменений
-        black --check .
-        
-        # Показать различия если есть
-        black --check --diff . || true
-        
-    - name: Auto-fix formatting (optional)
-      if: failure()
+      id: black-check
       continue-on-error: true
       run: |
-        echo "=== Auto-fixing formatting ==="
-        black .
-        echo "Formatted files:"
-        git diff --name-only
+        echo "=== Checking code formatting with Black ==="
+        black --check --diff --line-length=90 .
+    
+    - name: Auto-format and commit (for main branch)
+      if: steps.black-check.outcome == 'failure' && github.ref == 'refs/heads/main'
+      run: |
+        echo "=== Auto-formatting code ==="
+        black --line-length=90 .
+        
+        echo "=== Committing changes ==="
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "style: auto-format with Black" || echo "No changes to commit"
+        git push
+    
+    - name: Fail for PRs with unformatted code
+      if: steps.black-check.outcome == 'failure' && github.event_name == 'pull_request'
+      run: |
+        echo "❌ Code formatting issues found!"
+        echo "Please run: black --line-length=90 ."
+        echo "Or use: make format"
+        exit 1
