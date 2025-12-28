@@ -19,7 +19,8 @@ def compare_specific_files():
 
     while True:
         file_path = input(
-            f"Введите путь к файлу {len(files)+1} (или Enter для завершения): ").strip()
+            f"Введите путь к файлу {len(files)+1} (или Enter для завершения): "
+        ).strip()
 
         if not file_path:
             break
@@ -39,6 +40,7 @@ def compare_specific_files():
         for file_path in files:
             # Копируем файл во временную папку
             import shutil
+
             dest_path = os.path.join(temp_dir, os.path.basename(file_path))
             shutil.copy2(file_path, dest_path)
 
@@ -71,14 +73,14 @@ def compare_folder_with_reference():
     with tempfile.TemporaryDirectory() as temp_dir:
         # Копируем эталонный документ
         import shutil
+
         ref_name = os.path.basename(reference)
-        shutil.copy2(reference, os.path.join(
-            temp_dir, f"REFERENCE_{ref_name}"))
+        shutil.copy2(reference, os.path.join(temp_dir, f"REFERENCE_{ref_name}"))
 
         # Копируем все документы из папки
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
-            if os.path.isfile(file_path) and filename.lower().endswith(('.txt', '.pdf')):
+            if os.path.isfile(file_path) and filename.lower().endswith((".txt", ".pdf")):
                 shutil.copy2(file_path, os.path.join(temp_dir, filename))
 
         # Запускаем анализ
