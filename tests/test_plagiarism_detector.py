@@ -149,7 +149,6 @@ class TestFileLoading(unittest.TestCase):
         """Создание тестовых файлов перед каждым тестом."""
         # Создаем временную папку для тестов
         self.temp_dir = tempfile.mkdtemp(prefix="plagiarism_test_")
-
         # Создаем тестовые файлы
         self.test_files = {
             "doc1.txt": "Artificial intelligence is transforming "
