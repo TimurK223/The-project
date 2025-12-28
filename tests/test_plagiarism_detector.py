@@ -70,14 +70,14 @@ except ImportError as e:
     create_test_documents = None
     DOCUMENT_AVAILABLE = False
 
+
 # ============================================================================
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # ============================================================================
 
 
 def create_test_files(folder_path, files_dict):
-    """
-    Создание тестовых файлов
+    """Создание тестовых файлов.
 
     Args:
         folder_path: путь к папке
@@ -94,9 +94,10 @@ def create_test_files(folder_path, files_dict):
 
 
 def cleanup_folder(folder_path):
-    """Очистка папки"""
+    """Очистка папки."""
     if os.path.exists(folder_path):
         shutil.rmtree(folder_path)
+
 
 # ============================================================================
 # ТЕСТОВЫЕ КЛАССЫ
@@ -104,24 +105,26 @@ def cleanup_folder(folder_path):
 
 
 class TestModuleImport(unittest.TestCase):
-    """Тесты загрузки модуля"""
+    """Тесты загрузки модуля."""
 
     def test_module_import(self):
-        """Тест импорта модуля"""
+        """Тест импорта модуля."""
         self.assertTrue(MODULE_LOADED, "Модуль не загружен")
 
     def test_plagiarism_detector_class(self):
-        """Тест наличия класса PlagiarismDetector"""
-        self.assertIsNotNone(PlagiarismDetector,
-                             "Класс PlagiarismDetector не найден")
+        """Тест наличия класса PlagiarismDetector."""
+        self.assertIsNotNone(
+            PlagiarismDetector,
+            "Класс PlagiarismDetector не найден"
+        )
 
 
 class TestPlagiarismDetectorInitialization(unittest.TestCase):
-    """Тесты инициализации PlagiarismDetector"""
+    """Тесты инициализации PlagiarismDetector."""
 
     @unittest.skipIf(not MODULE_LOADED, "Модуль не загружен")
     def test_default_initialization(self):
-        """Тест инициализации с параметрами по умолчанию"""
+        """Тест инициализации с параметрами по умолчанию."""
         detector = PlagiarismDetector()
 
         self.assertIsInstance(detector, PlagiarismDetector)
@@ -131,7 +134,7 @@ class TestPlagiarismDetectorInitialization(unittest.TestCase):
 
     @unittest.skipIf(not MODULE_LOADED, "Модуль не загружен")
     def test_custom_initialization(self):
-        """Тест инициализации с пользовательскими параметрами"""
+        """Тест инициализации с пользовательскими параметрами."""
         detector = PlagiarismDetector(min_similarity_threshold=0.5)
 
         # Проверяем что порог установлен
@@ -139,32 +142,38 @@ class TestPlagiarismDetectorInitialization(unittest.TestCase):
 
 
 class TestFileLoading(unittest.TestCase):
-    """Тесты загрузки файлов"""
+    """Тесты загрузки файлов."""
 
     @unittest.skipIf(not MODULE_LOADED, "Модуль не загружен")
     def setUp(self):
-        """Создание тестовых файлов перед каждым тестом"""
+        """Создание тестовых файлов перед каждым тестом."""
         # Создаем временную папку для тестов
         self.temp_dir = tempfile.mkdtemp(prefix="plagiarism_test_")
 
         # Создаем тестовые файлы
         self.test_files = {
-            "doc1.txt": "Artificial intelligence is transforming modern education.",
-            "doc2.txt": "AI technologies are revolutionizing educational systems.",
-            "doc3.txt": "This is a test content. Machine learning is important.",
+            "doc1.txt": "Artificial intelligence is transforming "
+                        "modern education.",
+            "doc2.txt": "AI technologies are revolutionizing "
+                        "educational systems.",
+            "doc3.txt": "This is a test content. "
+                        "Machine learning is important.",
         }
 
-        self.test_folder = create_test_files(self.temp_dir, self.test_files)
+        self.test_folder = create_test_files(
+            self.temp_dir,
+            self.test_files
+        )
 
         # Создаем детектор
         self.detector = PlagiarismDetector()
 
     def tearDown(self):
-        """Очистка после каждого теста"""
+        """Очистка после каждого теста."""
         cleanup_folder(self.temp_dir)
 
     def test_load_valid_files(self):
-        """Тест загрузки поддерживаемых файлов"""
+        """Тест загрузки поддерживаемых файлов."""
         self.detector.load_documents(str(self.test_folder))
 
         # Проверяем что документы загружены
@@ -179,7 +188,7 @@ class TestFileLoading(unittest.TestCase):
             self.assertTrue(True)  # Просто проверяем что нет ошибок
 
     def test_load_empty_folder(self):
-        """Тест загрузки из пустой папки"""
+        """Тест загрузки из пустой папки."""
         empty_folder = self.test_folder / "empty"
         empty_folder.mkdir(exist_ok=True)
 
@@ -191,7 +200,7 @@ class TestFileLoading(unittest.TestCase):
             self.assertEqual(len(detector.documents), 0)
 
     def test_load_nonexistent_folder(self):
-        """Тест загрузки из несуществующей папки"""
+        """Тест загрузки из несуществующей папки."""
         detector = PlagiarismDetector()
 
         # Должно вызывать исключение
@@ -200,14 +209,15 @@ class TestFileLoading(unittest.TestCase):
 
 
 class TestTextPreprocessing(unittest.TestCase):
-    """Тесты предобработки текста"""
+    """Тесты предобработки текста."""
 
     @unittest.skipIf(not MODULE_LOADED, "Модуль не загружен")
     def setUp(self):
+        """Настройка перед тестами."""
         self.detector = PlagiarismDetector()
 
     def test_preprocess_basic(self):
-        """Тест базовой предобработки"""
+        """Тест базовой предобработки."""
         # Проверяем что метод существует
         self.assertTrue(hasattr(self.detector, 'preprocess_text'))
 
@@ -221,7 +231,7 @@ class TestTextPreprocessing(unittest.TestCase):
         self.assertEqual(processed, processed.lower())
 
     def test_preprocess_empty_text(self):
-        """Тест предобработки пустого текста"""
+        """Тест предобработки пустого текста."""
         processed = self.detector.preprocess_text("")
         self.assertEqual(processed, "")
 
@@ -229,7 +239,7 @@ class TestTextPreprocessing(unittest.TestCase):
         self.assertTrue(isinstance(processed, str))
 
     def test_preprocess_special_characters(self):
-        """Тест обработки специальных символов"""
+        """Тест обработки специальных символов."""
         test_text = "Multiple   spaces   here"
         processed = self.detector.preprocess_text(test_text)
 
@@ -241,18 +251,19 @@ class TestTextPreprocessing(unittest.TestCase):
 
 
 class TestSimilarityMethods(unittest.TestCase):
-    """Тесты методов расчета схожести"""
+    """Тесты методов расчета схожести."""
 
     @unittest.skipIf(not MODULE_LOADED, "Модуль не загружен")
     def setUp(self):
+        """Настройка перед тестами."""
         self.detector = PlagiarismDetector()
 
     def test_cosine_similarity_exists(self):
-        """Тест что метод косинусного сходства существует"""
+        """Тест что метод косинусного сходства существует."""
         self.assertTrue(hasattr(self.detector, 'cosine_similarity_method'))
 
     def test_cosine_similarity_identical(self):
-        """Тест косинусного сходства для идентичных текстов"""
+        """Тест косинусного сходства для идентичных текстов."""
         text1 = "artificial intelligence machine learning"
         text2 = "artificial intelligence machine learning"
 
@@ -266,7 +277,7 @@ class TestSimilarityMethods(unittest.TestCase):
         self.assertLessEqual(similarity, 1.0)
 
     def test_cosine_similarity_range(self):
-        """Тест что схожесть в диапазоне 0-1"""
+        """Тест что схожесть в диапазоне 0-1."""
         text1 = "python programming"
         text2 = "data science"
 
@@ -276,11 +287,11 @@ class TestSimilarityMethods(unittest.TestCase):
         self.assertLessEqual(similarity, 1.0)
 
     def test_lcs_method_exists(self):
-        """Тест что метод LCS существует"""
+        """Тест что метод LCS существует."""
         self.assertTrue(hasattr(self.detector, 'longest_common_subsequence'))
 
     def test_lcs_similarity(self):
-        """Тест метода LCS"""
+        """Тест метода LCS."""
         text1 = "the quick brown fox"
         text2 = "the quick brown fox"
 
@@ -291,11 +302,11 @@ class TestSimilarityMethods(unittest.TestCase):
         self.assertLessEqual(similarity, 1.0)
 
     def test_ngram_method_exists(self):
-        """Тест что метод N-gram существует"""
+        """Тест что метод N-gram существует."""
         self.assertTrue(hasattr(self.detector, 'ngram_similarity'))
 
     def test_ngram_similarity(self):
-        """Тест метода N-gram"""
+        """Тест метода N-gram."""
         text1 = "natural language processing"
         text2 = "natural language processing"
 
@@ -307,11 +318,11 @@ class TestSimilarityMethods(unittest.TestCase):
 
 
 class TestFullWorkflow(unittest.TestCase):
-    """Тесты полного рабочего процесса"""
+    """Тесты полного рабочего процесса."""
 
     @unittest.skipIf(not MODULE_LOADED, "Модуль не загружен")
     def setUp(self):
-        """Создание тестовых документов"""
+        """Создание тестовых документов."""
         self.temp_dir = tempfile.mkdtemp(prefix="plagiarism_workflow_")
 
         # Создаем тестовые документы
@@ -321,15 +332,18 @@ class TestFullWorkflow(unittest.TestCase):
             "doc3.txt": "Machine learning algorithms analyze data.",
         }
 
-        self.test_folder = create_test_files(self.temp_dir, self.test_files)
+        self.test_folder = create_test_files(
+            self.temp_dir,
+            self.test_files
+        )
         self.detector = PlagiarismDetector(min_similarity_threshold=0.3)
 
     def tearDown(self):
-        """Очистка после каждого теста"""
+        """Очистка после каждого теста."""
         cleanup_folder(self.temp_dir)
 
     def test_load_and_process(self):
-        """Тест загрузки и обработки документов"""
+        """Тест загрузки и обработки документов."""
         # Проверяем что методы существуют
         self.assertTrue(hasattr(self.detector, 'load_documents'))
         self.assertTrue(hasattr(self.detector, 'process_all_documents'))
@@ -344,7 +358,7 @@ class TestFullWorkflow(unittest.TestCase):
         self.assertTrue(True)
 
     def test_calculate_similarity_matrix(self):
-        """Тест расчета матрицы схожести"""
+        """Тест расчета матрицы схожести."""
         self.assertTrue(hasattr(self.detector, 'calculate_similarity_matrix'))
 
         # Загружаем и обрабатываем
@@ -361,7 +375,7 @@ class TestFullWorkflow(unittest.TestCase):
         self.assertTrue(isinstance(result, (dict, list, type(None))))
 
     def test_run_analysis_method(self):
-        """Тест метода run_analysis если он существует"""
+        """Тест метода run_analysis если он существует."""
         if hasattr(self.detector, 'run_analysis'):
             result = self.detector.run_analysis(str(self.test_folder))
 
@@ -373,14 +387,15 @@ class TestFullWorkflow(unittest.TestCase):
 
 
 class TestEdgeCases(unittest.TestCase):
-    """Тесты граничных случаев"""
+    """Тесты граничных случаев."""
 
     @unittest.skipIf(not MODULE_LOADED, "Модуль не загружен")
     def setUp(self):
+        """Настройка перед тестами."""
         self.detector = PlagiarismDetector()
 
     def test_similarity_with_empty_texts(self):
-        """Тест схожести с пустыми текстами"""
+        """Тест схожести с пустыми текстами."""
         # Косинусная схожесть
         cosine = self.detector.cosine_similarity_method("", "test")
         self.assertIsInstance(cosine, (int, float))
@@ -389,7 +404,7 @@ class TestEdgeCases(unittest.TestCase):
         self.assertIsInstance(cosine, (int, float))
 
     def test_long_text_processing(self):
-        """Тест обработки длинного текста"""
+        """Тест обработки длинного текста."""
         long_text = "word " * 100
 
         processed = self.detector.preprocess_text(long_text)
@@ -397,7 +412,7 @@ class TestEdgeCases(unittest.TestCase):
         self.assertTrue(len(processed) > 0)
 
     def test_unicode_text(self):
-        """Тест обработки Unicode текста"""
+        """Тест обработки Unicode текста."""
         test_texts = [
             "Привет мир",  # Русский
             "Hello world",  # Английский
@@ -412,12 +427,14 @@ class TestEdgeCases(unittest.TestCase):
 
 
 class TestCreateTestDocuments(unittest.TestCase):
-    """Тесты функции создания тестовых документов"""
+    """Тесты функции создания тестовых документов."""
 
-    @unittest.skipIf(not MODULE_LOADED or create_test_documents is None,
-                     "Функция create_test_documents не доступна")
+    @unittest.skipIf(
+        not MODULE_LOADED or create_test_documents is None,
+        "Функция create_test_documents не доступна"
+    )
     def test_create_test_documents(self):
-        """Тест создания тестовых документов"""
+        """Тест создания тестовых документов."""
         temp_dir = tempfile.mkdtemp(prefix="test_docs_")
 
         try:
@@ -439,13 +456,14 @@ class TestCreateTestDocuments(unittest.TestCase):
         finally:
             cleanup_folder(temp_dir)
 
+
 # ============================================================================
 # ЗАПУСК ТЕСТОВ
 # ============================================================================
 
 
 def run_selected_tests():
-    """Запуск выбранных тестов (без требующих Document)"""
+    """Запуск выбранных тестов (без требующих Document)."""
     # Создаем тестовый набор
     test_loader = unittest.TestLoader()
 
@@ -468,11 +486,14 @@ def run_selected_tests():
             test_classes.append(TestCreateTestDocuments)
 
         for test_class in test_classes:
-            test_suite.addTests(test_loader.loadTestsFromTestCase(test_class))
+            test_suite.addTests(
+                test_loader.loadTestsFromTestCase(test_class)
+            )
     else:
         print("\n⚠️ Модуль не загружен, запускаются только базовые тесты")
         test_suite.addTests(
-            test_loader.loadTestsFromTestCase(TestModuleImport))
+            test_loader.loadTestsFromTestCase(TestModuleImport)
+        )
 
     # Запускаем тесты
     runner = unittest.TextTestRunner(verbosity=2)
@@ -482,12 +503,17 @@ def run_selected_tests():
     print("\n" + "="*60)
     print("📊 РЕЗУЛЬТАТЫ ТЕСТОВ:")
     print(f"  Всего тестов: {result.testsRun}")
-    print(
-        f"  Успешно: {result.testsRun - len(result.failures) - len(result.errors)}")
+    success_count = (
+        result.testsRun - len(result.failures) - len(result.errors)
+    )
+    print(f"  Успешно: {success_count}")
+    
     if result.failures:
         print(f"  Провалено: {len(result.failures)}")
+    
     if result.errors:
         print(f"  Ошибок: {len(result.errors)}")
+    
     print("="*60)
 
     # Показываем детали если есть ошибки
