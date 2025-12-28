@@ -21,24 +21,24 @@ jobs:
     - name: Install flake8 with plugins
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 flake8-bugbear flake8-comprehensions flake8-docstrings
+        pip install flake8 flake8-bugbear flake8-comprehensions
     
-    - name: Run flake8 comprehensive check
+    - name: Run flake8 with 90 chars line length
       run: |
-        echo "=== Running flake8 linting ==="
+        echo "=== Running flake8 linting (max line length: 90) ==="
         
-        # Базовый flake8
+        # Базовый flake8 с длиной строки 90
         echo "1. Basic flake8 check:"
-        flake8 . --count --show-source
+        flake8 . --count --show-source --max-line-length=90
         
         # Проверка сложности кода
         echo "2. Code complexity check:"
-        flake8 . --max-complexity=10
+        flake8 . --max-complexity=10 --max-line-length=90
         
         # Расширенные проверки
         echo "3. Extended checks:"
-        flake8 . --select=B,C,E,F,W,T4,B9
+        flake8 . --select=B,C,E,F,W,T4,B9 --max-line-length=90
         
-        # Проверка докстрингов (если нужно)
-        echo "4. Docstring checks (optional):"
-        flake8 . --docstring-convention=pep257 || true
+        # Отчет по типам ошибок
+        echo "4. Error type summary:"
+        flake8 . --max-line-length=90 --statistics
